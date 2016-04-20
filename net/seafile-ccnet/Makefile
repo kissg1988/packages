@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2015 OpenWrt.org
+# Copyright (C) 2007-2016 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -8,14 +8,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=seafile-ccnet
-PKG_VERSION:=4.1.2
+PKG_VERSION:=5.1.1
 PKG_RELEASE=$(PKG_SOURCE_VERSION)
 PKG_LICENSE:=GPL-3.0
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/haiwen/ccnet.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=a73109f09af4ecc49cdc4c57cdde51b38e15c31a
+PKG_SOURCE_VERSION:=6d94fdc4296d542a5552039dc13a67c3448e8b13
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
@@ -60,6 +60,7 @@ define Package/seafile-ccnet/install
 	$(CP) $(PKG_INSTALL_DIR)/usr/bin/ccnet* $(1)/usr/bin/
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/python2.7/site-packages/ccnet $(1)/usr/lib/python2.7/site-packages/
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libccnet.so* $(1)/usr/lib/
+#	$(RM) $(1)/usr/lib/python2.7/site-packages/{ccnet,ccnet/async}/*.py{c,o}
 endef
 
 define Build/InstallDev

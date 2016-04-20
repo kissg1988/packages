@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2015 OpenWrt.org
+# Copyright (C) 2007-2016 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -8,14 +8,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=seafile-server
-PKG_VERSION:=4.1.2
+PKG_VERSION:=5.1.1
 PKG_RELEASE=$(PKG_SOURCE_VERSION)
 PKG_LICENSE:=GPL-3.0
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/haiwen/seafile.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=c0166019c712e2e1d5e532fd5f7401b1b72db6d8
+PKG_SOURCE_VERSION:=5a8677a3acdde748caa387adfc054da64f2a24ea
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
@@ -29,11 +29,11 @@ define Package/seafile-server
     TITLE:=Seafile server
     MAINTAINER:=Gergely Kiss <mail.gery@gmail.com>
     URL:=http://seafile.com/
-    DEPENDS:=+shadow-useradd +libarchive +libopenssl +glib2 +libsearpc +seafile-ccnet +seafile-seahub \
+    DEPENDS:=+shadow-useradd +libarchive +libopenssl +glib2 +libsearpc +seafile-ccnet \
 		+sqlite3-cli +python-mysql +jansson +libevent2 +libevent2-openssl +zlib +libzdb +libsqlite3 \
 		+libmysqlclient +libevhtp +libpthread +libuuid \
 		+bash +sudo +procps +procps-pkill $(ICONV_DEPENDS)
-    EXTRA_DEPENDS:=seafile-ccnet (=4.1.2-a73109f09af4ecc49cdc4c57cdde51b38e15c31a), seafile-seahub (=4.1.2-3fb1288f920de03a4e2e6a06b60671ce98971742)
+    EXTRA_DEPENDS:=seafile-ccnet (=5.1.1-6d94fdc4296d542a5552039dc13a67c3448e8b13)
 endef
 
 define Package/seafile-server/description

@@ -1,34 +1,36 @@
-diff -rupN seafile-3.1.7-server.orig/scripts/seaf-gc.sh seafile-3.1.7-server/scripts/seaf-gc.sh
---- seafile-3.1.7-server.orig/scripts/seaf-gc.sh	2014-10-16 05:30:04.000000000 +0200
-+++ seafile-3.1.7-server/scripts/seaf-gc.sh	2014-12-13 00:51:12.919136978 +0100
-@@ -6,11 +6,10 @@ SCRIPT=$(readlink -f "$0")
- INSTALLPATH=$(dirname "${SCRIPT}")
+diff -rupN seafile-server-5.1.1.orig/scripts/seaf-gc.sh seafile-server-5.1.1/scripts/seaf-gc.sh
+--- seafile-server-5.1.1.orig/scripts/seaf-gc.sh	2016-04-19 15:44:33.000000000 +0200
++++ seafile-server-5.1.1/scripts/seaf-gc.sh	2016-04-19 16:20:01.930706158 +0200
+@@ -7,11 +7,12 @@ INSTALLPATH=$(dirname "${SCRIPT}")
  TOPDIR=$(dirname "${INSTALLPATH}")
  default_ccnet_conf_dir=${TOPDIR}/ccnet
+ default_conf_dir=${TOPDIR}/conf
 -seaf_gc=${INSTALLPATH}/seafile/bin/seafserv-gc
 +seaf_gc=/usr/bin/seafserv-gc
  seaf_gc_opts=""
  
--export PATH=${INSTALLPATH}/seafile/bin:$PATH
--export SEAFILE_LD_LIBRARY_PATH=${INSTALLPATH}/seafile/lib/:${INSTALLPATH}/seafile/lib64:${LD_LIBRARY_PATH}
+ export PATH=${INSTALLPATH}/seafile/bin:$PATH
+ export SEAFILE_LD_LIBRARY_PATH=${INSTALLPATH}/seafile/lib/:${INSTALLPATH}/seafile/lib64:${LD_LIBRARY_PATH}
 +export PYTHONPATH="/usr/share/seafile/seafile-server/seahub/thirdpart:$PYTHONPATH"
  
  script_name=$0
  function usage () {
-@@ -78,9 +77,7 @@ function run_seaf_gc () {
+@@ -79,11 +80,7 @@ function run_seaf_gc () {
  
      echo "Starting seafserv-gc, please wait ..."
  
 -    LD_LIBRARY_PATH=$SEAFILE_LD_LIBRARY_PATH ${seaf_gc} \
--        -c "${default_ccnet_conf_dir}" -d "${seafile_data_dir}" \
+-        -c "${default_ccnet_conf_dir}" \
+-        -d "${seafile_data_dir}" \
+-        -F "${default_conf_dir}" \
 -        ${seaf_gc_opts}
-+    ${seaf_gc} -c "${default_ccnet_conf_dir}" -d "${seafile_data_dir}" ${seaf_gc_opts}
++    ${seaf_gc} -c "${default_ccnet_conf_dir}" -d "${seafile_data_dir}" -F "${default_conf_dir}" ${seaf_gc_opts}
  
      echo "seafserv-gc run done"
      echo
-diff -rupN seafile-3.1.7-server.orig/scripts/setup-seafile-mysql.sh seafile-3.1.7-server/scripts/setup-seafile-mysql.sh
---- seafile-3.1.7-server.orig/scripts/setup-seafile-mysql.sh	2014-10-16 05:30:04.000000000 +0200
-+++ seafile-3.1.7-server/scripts/setup-seafile-mysql.sh	2014-12-13 00:51:49.242172631 +0100
+diff -rupN seafile-server-5.1.1.orig/scripts/setup-seafile-mysql.sh seafile-server-5.1.1/scripts/setup-seafile-mysql.sh
+--- seafile-server-5.1.1.orig/scripts/setup-seafile-mysql.sh	2016-04-19 15:44:33.000000000 +0200
++++ seafile-server-5.1.1/scripts/setup-seafile-mysql.sh	2016-04-19 16:20:37.078718240 +0200
 @@ -9,6 +9,8 @@ set -e
  SCRIPT=$(readlink -f "$0")
  INSTALLPATH=$(dirname "${SCRIPT}")
