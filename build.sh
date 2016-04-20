@@ -1,6 +1,8 @@
 #!/bin/sh -eu
 
-BUILDROOT="/home/nb/openwrt_build/openwrt_15.05.1"
+BUILDROOT="/home/nb/openwrt-build/openwrt_15.05.1"
+THREADS=4
+
 OLDPWD=$(pwd)
 cd "${BUILDROOT}"
 
@@ -21,9 +23,9 @@ CONFIG_TARGET_ar71xx_nand_WNDR4300=y
 #CONFIG_PACKAGE_seafile-server=m
 #CONFIG_PACKAGE_seafile-seahub=m
 #CONFIG_PACKAGE_seafile-ccnet=m
-CONFIG_PACKAGE_vala=m
 EOF
 
 make defconfig
 echo "Build has started, be patient....."
-nice -n 19 make -j9 V=s > ${BUILDROOT}/build.log 2>&1
+nice -n 19 make -j$((THREADS + 1)) V=s > "${BUILDROOT}/build.log" 2>&1
+cd "${OLDPWD}"
