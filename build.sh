@@ -1,6 +1,6 @@
 #!/bin/sh -eu
 
-BUILDROOT="/home/nb/openwrt-build/openwrt_15.05.1"
+BUILDROOT="/home/nb/openwrt-build/openwrt-15.05"
 THREADS=4
 
 OLDPWD=$(pwd)
