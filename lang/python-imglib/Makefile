@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=python-imglib
 PKG_VERSION:=1.1.7
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 PKG_LICENSE:=CUSTOM
 PKG_LICENSE_FILES:=README
 
@@ -28,7 +28,7 @@ define Package/python-imglib
   TITLE:=Python Imaging Library (PIL)
   MAINTAINER:=Gergely Kiss <mail.gery@gmail.com>
   URL:=http://www.pythonware.com/products/pil/
-  DEPENDS:=+python +libfreetype +libjpeg +zlib
+  DEPENDS:=+python +libfreetype +libjpeg +zlib +libtiff
 endef
 
 define Package/python-imglib/description
@@ -57,6 +57,7 @@ define Package/python-imglib/install
 		$(PKG_INSTALL_DIR)$(PYTHON_PKG_DIR)/* \
 		$(1)$(PYTHON_PKG_DIR)/
 	$(CP) $(PKG_INSTALL_DIR)/usr/bin/* $(1)/usr/bin
+	$(CP) $(PKG_BUILD_DIR)/README $(1)$(PYTHON_PKG_DIR)/PIL/
 endef
 
 $(eval $(call BuildPackage,python-imglib))

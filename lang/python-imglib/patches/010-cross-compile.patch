@@ -1,29 +1,57 @@
 diff -rupN Imaging-1.1.7.orig/setup.py Imaging-1.1.7/setup.py
 --- Imaging-1.1.7.orig/setup.py	2009-11-15 17:06:10.000000000 +0100
-+++ Imaging-1.1.7/setup.py	2014-12-11 01:01:10.857100877 +0100
++++ Imaging-1.1.7/setup.py	2016-04-21 14:19:01.076423593 +0200
 @@ -34,10 +34,10 @@ def libinclude(root):
  # TIFF_ROOT = libinclude("/opt/tiff")
  
  TCL_ROOT = None
 -JPEG_ROOT = None
 -ZLIB_ROOT = None
-+JPEG_ROOT = os.environ['STAGING_DIR'] + "/usr/lib", os.environ['STAGING_DIR'] + "/usr/include"
-+ZLIB_ROOT = os.environ['STAGING_DIR'] + "/usr/lib", os.environ['STAGING_DIR'] + "/usr/include"
- TIFF_ROOT = None
+-TIFF_ROOT = None
 -FREETYPE_ROOT = None
-+FREETYPE_ROOT = os.environ['STAGING_DIR'] + "/usr/lib", os.environ['STAGING_DIR'] + "/usr/include"
++JPEG_ROOT = libinclude(os.environ['STAGING_DIR'] + "/usr")
++ZLIB_ROOT = libinclude(os.environ['STAGING_DIR'] + "/usr")
++TIFF_ROOT = libinclude(os.environ['STAGING_DIR'] + "/usr")
++FREETYPE_ROOT = libinclude(os.environ['STAGING_DIR'] + "/usr")
  LCMS_ROOT = None
  
  # FIXME: add mechanism to explicitly *disable* the use of a library
-@@ -147,7 +147,6 @@ class pil_build_ext(build_ext):
-             add_directory(library_dirs, "/opt/local/lib")
-             add_directory(include_dirs, "/opt/local/include")
+@@ -128,34 +128,6 @@ class pil_build_ext(build_ext):
+         add_directory(include_dirs, "libImaging")
  
+         #
+-        # add platform directories
+-
+-        if sys.platform == "cygwin":
+-            # pythonX.Y.dll.a is in the /usr/lib/pythonX.Y/config directory
+-            add_directory(library_dirs, os.path.join(
+-                "/usr/lib", "python%s" % sys.version[:3], "config"
+-                ))
+-
+-        elif sys.platform == "darwin":
+-            # attempt to make sure we pick freetype2 over other versions
+-            add_directory(include_dirs, "/sw/include/freetype2")
+-            add_directory(include_dirs, "/sw/lib/freetype2/include")
+-            # fink installation directories
+-            add_directory(library_dirs, "/sw/lib")
+-            add_directory(include_dirs, "/sw/include")
+-            # darwin ports installation directories
+-            add_directory(library_dirs, "/opt/local/lib")
+-            add_directory(include_dirs, "/opt/local/include")
+-
 -        add_directory(library_dirs, "/usr/local/lib")
-         # FIXME: check /opt/stuff directories here?
+-        # FIXME: check /opt/stuff directories here?
+-
+-        prefix = sysconfig.get_config_var("prefix")
+-        if prefix:
+-            add_directory(library_dirs, os.path.join(prefix, "lib"))
+-            add_directory(include_dirs, os.path.join(prefix, "include"))
+-
+-        #
+         # locate tkinter libraries
  
-         prefix = sysconfig.get_config_var("prefix")
-@@ -199,22 +198,6 @@ class pil_build_ext(build_ext):
+         if _tkinter:
+@@ -199,22 +171,6 @@ class pil_build_ext(build_ext):
              add_directory(include_dirs, include_root)
  
          #
@@ -46,3 +74,12 @@ diff -rupN Imaging-1.1.7.orig/setup.py Imaging-1.1.7/setup.py
          # insert new dirs *before* default libs, to avoid conflicts
          # between Python PYD stub libs and real libraries
  
+@@ -247,7 +203,7 @@ class pil_build_ext(build_ext):
+             # look for freetype2 include files
+             freetype_version = 0
+             for dir in self.compiler.include_dirs:
+-                if os.path.isfile(os.path.join(dir, "ft2build.h")):
++                if os.path.isfile(os.path.join(dir, "freetype2/ft2build.h")):
+                     freetype_version = 21
+                     dir = os.path.join(dir, "freetype2")
+                     break

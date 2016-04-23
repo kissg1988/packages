@@ -7,33 +7,33 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=django
-PKG_VERSION:=1.8.12
+PKG_NAME:=rcssmin
+PKG_VERSION:=1.0.6
 PKG_RELEASE=1
-PKG_LICENSE:=BSD-3-Clause
+PKG_LICENSE:=Apache-2.0
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/django/django.git
+PKG_SOURCE_URL:=https://github.com/ndparker/rcssmin.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=c168aeba175dbb92c615460a360cb1ea978de5d3
+PKG_SOURCE_VERSION:=4764e3bc47ca8d44be3198892e73c51d8a0a9970
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 PKG_BUILD_DEPENDS:=python python-setuptools
 
 include $(INCLUDE_DIR)/package.mk
 $(call include_mk, python-package.mk)
 
-define Package/django
+define Package/rcssmin
     SUBMENU:=Python
     SECTION:=lang
     CATEGORY:=Languages
-    TITLE:=The web framework for perfectionists with deadlines.
+    TITLE:=Fast CSS minifier for Python
     MAINTAINER:=Gergely Kiss <mail.gery@gmail.com>
-    URL:=https://www.djangoproject.com/
+    URL:=http://opensource.perlig.de/rcssmin/
     DEPENDS:=+python
 endef
 
-define Package/django/description
-    The web framework for perfectionists with deadlines.
+define Package/rcssmin/description
+    Fast CSS minifier for Python
 endef
 
 define Build/Compile
@@ -42,24 +42,16 @@ endef
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)$(PYTHON_PKG_DIR)
-	$(INSTALL_DIR) $(1)/usr/bin
 	$(CP) \
 	    $(PKG_INSTALL_DIR)$(PYTHON_PKG_DIR)/* \
 	    $(1)$(PYTHON_PKG_DIR)
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/django-admin.py \
-	    $(1)/usr/bin
 endef
 
-define Package/django/install
+define Package/rcssmin/install
 	$(INSTALL_DIR) $(1)$(PYTHON_PKG_DIR)
-	$(INSTALL_DIR) $(1)/usr/bin
 	$(CP) \
 	    $(PKG_INSTALL_DIR)$(PYTHON_PKG_DIR)/* \
 	    $(1)$(PYTHON_PKG_DIR)
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/django-admin.py \
-	    $(1)/usr/bin
-	# fix python exec path
-	sed -i 's/#!.*/#!\/usr\/bin\/python/g' $(1)/usr/bin/django-admin.py
 endef
 
-$(eval $(call BuildPackage,django))
+$(eval $(call BuildPackage,rcssmin))

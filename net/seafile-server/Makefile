@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=seafile-server
 PKG_VERSION:=5.1.1
-PKG_RELEASE=$(PKG_SOURCE_VERSION)
+PKG_RELEASE=$(PKG_SOURCE_VERSION)-10
 PKG_LICENSE:=GPL-3.0
 
 PKG_SOURCE_PROTO:=git
@@ -22,6 +22,7 @@ PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
+$(call include_mk, python-package.mk)
 
 define Package/seafile-server
     SECTION:=net
@@ -29,19 +30,14 @@ define Package/seafile-server
     TITLE:=Seafile server
     MAINTAINER:=Gergely Kiss <mail.gery@gmail.com>
     URL:=http://seafile.com/
-    DEPENDS:=+shadow-useradd +libarchive +libopenssl +glib2 +libsearpc +seafile-ccnet \
-		+sqlite3-cli +python-mysql +jansson +libevent2 +libevent2-openssl +zlib +libzdb +libsqlite3 \
-		+libmysqlclient +libevhtp +libpthread +libuuid \
-		+bash +sudo +procps +procps-pkill $(ICONV_DEPENDS)
-    EXTRA_DEPENDS:=seafile-ccnet (=5.1.1-6d94fdc4296d542a5552039dc13a67c3448e8b13)
+    DEPENDS:=+libarchive +libopenssl +glib2 +libsearpc +seafile-ccnet +seafile-seahub +sqlite3-cli +python-mysql \
+		+jansson +libevent2 +libevent2-openssl +zlib +libzdb +libsqlite3 +libmysqlclient +libevhtp \
+		+libpthread +libuuid +bash +procps +procps-pkill $(ICONV_DEPENDS)
+    EXTRA_DEPENDS:=seafile-ccnet (=5.1.1-6d94fdc4296d542a5552039dc13a67c3448e8b13-1), seafile-seahub (=5.1.1-95f762f396c81f840fe658ab983df53784083bb1-6)
 endef
 
 define Package/seafile-server/description
    Open source cloud storage with advanced features on privacy protection and teamwork.
-endef
-
-define Package/seafile-server/conffiles
-/etc/config/seafile
 endef
 
 CONFIGURE_ARGS += --disable-riak \
@@ -53,50 +49,55 @@ CONFIGURE_ARGS += --disable-riak \
 		    --disable-server-pkg \
 		    --disable-console
 
-PKG_BUILD_DEPENDS:=vala/host \
-		    libsearpc/host
+PKG_BUILD_DEPENDS:=vala/host
 
+# debugging
+TARGET_CFLAGS += -ggdb3
 TARGET_LDFLAGS += -Wl,-rpath-link=$(STAGING_DIR)/usr/lib -liconv \
 		    -L$(STAGING_DIR)/usr/lib/mysql -lmysqlclient -lz
 
+define Package/seafile-server/conffiles
+/etc/config/seafile
+endef
+
 define Package/seafile-server/install
 	$(INSTALL_DIR) $(1)/usr/{bin,lib}
-	$(INSTALL_DIR) $(1)/usr/lib/python2.7/site-packages
-	$(INSTALL_DIR) $(1)/usr/share/seafile/seafile-server/runtime
-	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_DIR) $(1)/etc/config
+	$(INSTALL_DIR) $(1)$(PYTHON_PKG_DIR)
+	$(INSTALL_DIR) $(1)/usr/share/seafile/seafile-server
+	$(INSTALL_DIR) $(1)/etc/{config,init.d}
 	$(CP) $(PKG_INSTALL_DIR)/usr/bin/* $(1)/usr/bin/
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/python2.7/site-packages/seafile/ $(1)/usr/lib/python2.7/site-packages/
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/python2.7/site-packages/seaserv/ $(1)/usr/lib/python2.7/site-packages/
+	$(CP) $(PKG_INSTALL_DIR)$(PYTHON_PKG_DIR)/seafile/ $(1)$(PYTHON_PKG_DIR)/
+	$(CP) $(PKG_INSTALL_DIR)$(PYTHON_PKG_DIR)/seaserv/ $(1)$(PYTHON_PKG_DIR)/
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libseafile.so* $(1)/usr/lib/
 	$(CP) $(PKG_BUILD_DIR)/scripts/seaf-gc.sh $(1)/usr/share/seafile/seafile-server/
+	$(CP) $(PKG_BUILD_DIR)/scripts/seaf-fsck.sh $(1)/usr/share/seafile/seafile-server/
 	$(CP) $(PKG_BUILD_DIR)/scripts/setup-seafile-mysql.py $(1)/usr/share/seafile/seafile-server/
 	$(CP) $(PKG_BUILD_DIR)/scripts/setup-seafile-mysql.sh $(1)/usr/share/seafile/seafile-server/
 	$(CP) $(PKG_BUILD_DIR)/scripts/sqlite2mysql.py $(1)/usr/share/seafile/seafile-server/
 	$(CP) $(PKG_BUILD_DIR)/scripts/sqlite2mysql.sh $(1)/usr/share/seafile/seafile-server/
+	$(CP) $(PKG_BUILD_DIR)/scripts/check_init_admin.py $(1)/usr/share/seafile/seafile-server/
 	$(CP) $(PKG_BUILD_DIR)/scripts/upgrade/ $(1)/usr/share/seafile/seafile-server/
-	$(INSTALL_BIN) ./files/seafile.init $(1)/etc/init.d/seafile
 	$(CP) ./files/seafile.conf $(1)/etc/config/seafile
+	$(INSTALL_BIN) ./files/seafile.init $(1)/etc/init.d/seafile
+	$(INSTALL_BIN) ./files/seahub.init $(1)/etc/init.d/seahub
+	find $(1) -name "*\.pyc" -o -name "*\.pyo" | xargs rm -f
 endef
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include
 	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
+	$(INSTALL_DIR) $(1)$(PYTHON_PKG_DIR)
 	$(CP) $(PKG_INSTALL_DIR)/usr/include/seafile/ $(1)/usr/include/
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/libseafile.pc $(1)/usr/lib/pkgconfig/
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libseafile.so* $(1)/usr/lib/
+	$(CP) $(PKG_INSTALL_DIR)$(PYTHON_PKG_DIR)/seafile/ $(1)$(PYTHON_PKG_DIR)/
+	$(CP) $(PKG_INSTALL_DIR)$(PYTHON_PKG_DIR)/seaserv/ $(1)$(PYTHON_PKG_DIR)/
 endef
 
 define Package/seafile-server/postinst
 #!/bin/sh
 
-if ! id -u seafile >/dev/null 2>&1; then
-    useradd seafile -d "/usr/share/seafile" -s /bin/sh; fi
-
-chown -R seafile:seafile /usr/share/seafile/
-chmod -R o-rwx /usr/share/seafile/
-
-if [ ! -d "/usr/share/seafile/seafile-data" ]
+if [ ! -d /usr/share/seafile/seafile-data ]
 then
    echo "*** Installation completed, running configuration script..."
    /etc/init.d/seafile setup
@@ -107,26 +108,14 @@ then
       echo "*** ERROR: Configuration failed. Please fix the issues if any and re-run the script using the command below:"
       echo "*** \"/etc/init.d/seafile setup\""
    fi
-
-   echo
-   echo "*** NOTE: you need to create an admin account before using Seafile."
-   echo "*** Please run \"/etc/init.d/seafile create_admin\" to do so."
 else
-   echo "*** WARNING: it seems you are upgrading from an older version."
-   echo "*** If so, please run the appropriate upgrade script before using the new version of Seafile."
+   echo "*** seafile-data directory already exists."
+   echo "*** In case you are upgrading seafile, please run the appropriate upgrade script"
+   echo "*** manually before using the new version of Seafile."
    echo "*** Upgrade scripts are located at \"/usr/share/seafile/seafile-server/upgrade\""
    echo
    echo "*** For more information, please read http://manual.seafile.com/deploy/upgrade.html"
-   exit
 fi
-
-/etc/init.d/seafile enable
-/etc/init.d/seafile restart
-endef
-
-define Package/seafile-server/prerm
-#!/bin/sh
-/etc/init.d/seafile stop
 endef
 
 $(eval $(call BuildPackage,seafile-server))

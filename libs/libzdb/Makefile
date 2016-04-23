@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libzdb
 PKG_VERSION:=3.1
-PKG_RELEASE:=1
+PKG_RELEASE:=3
 PKG_LICENSE:=GPL-3.0
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
@@ -41,7 +41,6 @@ define Package/libzdb/description
 endef
 
 CONFIGURE_ARGS += --disable-profiling \
-		    --enable-optimized \
 		    --with-mysql \
 		    --with-postgresql \
 		    --with-sqlite \

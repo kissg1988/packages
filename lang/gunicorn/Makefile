@@ -47,7 +47,7 @@ define Package/gunicorn/install
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/gunicorn* \
 	    $(1)/usr/bin
 	# fix python exec path in scripts
-	sed -i 's/#!.*/#!\/usr\/bin\/python/g' $(1)/usr/bin/gunicorn*
+	$(SED) 's/#!.*/#!\/usr\/bin\/python/g' $(1)/usr/bin/gunicorn*
 endef
 
 $(eval $(call BuildPackage,gunicorn))

@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=seafile-ccnet
 PKG_VERSION:=5.1.1
-PKG_RELEASE=$(PKG_SOURCE_VERSION)
+PKG_RELEASE=$(PKG_SOURCE_VERSION)-1
 PKG_LICENSE:=GPL-3.0
 
 PKG_SOURCE_PROTO:=git
@@ -22,6 +22,7 @@ PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
+$(call include_mk, python-package.mk)
 
 define Package/seafile-ccnet
     SECTION:=net
@@ -32,6 +33,7 @@ define Package/seafile-ccnet
     DEPENDS:=+libsearpc +libevent2 +libopenssl \
 		+glib2 +python +libzdb +libuuid \
 		+libpthread +libsqlite3 +jansson $(ICONV_DEPENDS)
+    EXTRA_DEPENDS:=libsearpc (=5.1.1-8998e7b2c5587f0b94c48db24e2952d08def5add-1)
 endef
 
 define Package/seafile-ccnet/description
@@ -48,19 +50,20 @@ CONFIGURE_ARGS += --disable-client \
 		    --disable-compile-demo \
 		    --disable-console
 
-PKG_BUILD_DEPENDS:=vala/host \
-		   libsearpc/host
+PKG_BUILD_DEPENDS:=vala/host
 
+# debugging
+TARGET_CFLAGS += -ggdb3
 TARGET_LDFLAGS += -Wl,-rpath-link=$(STAGING_DIR)/usr/lib -liconv \
 		    -L$(STAGING_DIR)/usr/lib/mysql -lmysqlclient -lz
 
 define Package/seafile-ccnet/install
 	$(INSTALL_DIR) $(1)/usr/{bin,lib}
-	$(INSTALL_DIR) $(1)/usr/lib/python2.7/site-packages
+	$(INSTALL_DIR) $(1)$(PYTHON_PKG_DIR)
 	$(CP) $(PKG_INSTALL_DIR)/usr/bin/ccnet* $(1)/usr/bin/
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/python2.7/site-packages/ccnet $(1)/usr/lib/python2.7/site-packages/
+	$(CP) $(PKG_INSTALL_DIR)$(PYTHON_PKG_DIR)/ccnet $(1)$(PYTHON_PKG_DIR)
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libccnet.so* $(1)/usr/lib/
-#	$(RM) $(1)/usr/lib/python2.7/site-packages/{ccnet,ccnet/async}/*.py{c,o}
+	find $(1) -name "*\.pyc" -o -name "*\.pyo" | xargs rm -f
 endef
 
 define Build/InstallDev
@@ -68,7 +71,6 @@ define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
 	$(CP) $(PKG_INSTALL_DIR)/usr/include/ccnet* $(1)/usr/include/
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/libccnet.pc $(1)/usr/lib/pkgconfig/
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libccnet.a $(1)/usr/lib/
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libccnet.so* $(1)/usr/lib/
 endef
 

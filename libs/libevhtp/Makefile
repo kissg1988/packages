@@ -8,14 +8,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libevhtp
-PKG_VERSION:=1.2.10
-PKG_RELEASE:=2
+PKG_VERSION:=1.2.8
+PKG_RELEASE:=1
 PKG_LICENSE:=BSD-3-Clause
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/ellzey/libevhtp.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=ba4c44eed1fb7a5cf8e4deb236af4f7675cc72d5
+PKG_SOURCE_VERSION:=a70c9facfee07e6900a21d5a8ab8df260f64162f
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 
 PKG_INSTALL:=1
@@ -28,7 +28,7 @@ define Package/libevhtp
     TITLE:=A more flexible replacement for libevent's httpd API
     MAINTAINER:=Gergely Kiss <mail.gery@gmail.com>
     URL:=https://github.com/ellzey/libevhtp
-    DEPENDS:=+libevent2 +libevent2-openssl +libevent2-pthreads +libopenssl +libpthread
+    DEPENDS:=+libevent2 +libevent2-pthreads +libpthread
 endef
 
 define Package/libevhtp/description

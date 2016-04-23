@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libsearpc
 PKG_VERSION:=5.1.1
-PKG_RELEASE=$(PKG_SOURCE_VERSION)
+PKG_RELEASE=$(PKG_SOURCE_VERSION)-1
 PKG_LICENSE:=GPL-3.0
 
 PKG_SOURCE_PROTO:=git
@@ -22,6 +22,7 @@ PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
+$(call include_mk, python-package.mk)
 
 define Package/libsearpc
     SECTION:=libs
@@ -41,22 +42,9 @@ endef
 CONFIGURE_ARGS += --enable-compile-demo=no \
 		    --disable-server-pkg
 
+# debugging
+TARGET_CFLAGS += -ggdb3
 TARGET_LDFLAGS += -Wl,-rpath-link=$(STAGING_DIR)/usr/lib -liconv
-
-include $(INCLUDE_DIR)/host-build.mk
-
-define Host/Configure
-endef
-
-define Host/Compile
-endef
-
-define Host/Install
-	$(INSTALL_DIR) $(STAGING_DIR_HOST)/bin
-	$(INSTALL_BIN) $(HOST_BUILD_DIR)/lib/searpc-codegen.py $(STAGING_DIR_HOST)/bin/
-endef
-
-$(eval $(call HostBuild))
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/{bin,include}
@@ -69,9 +57,10 @@ endef
 
 define Package/libsearpc/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_DIR) $(1)/usr/lib/python2.7/site-packages
+	$(INSTALL_DIR) $(1)$(PYTHON_PKG_DIR)
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libsearpc.so* $(1)/usr/lib/
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/python2.7/site-packages/pysearpc $(1)/usr/lib/python2.7/site-packages/
+	$(CP) $(PKG_INSTALL_DIR)$(PYTHON_PKG_DIR)/pysearpc $(1)$(PYTHON_PKG_DIR)
+	find $(1) -name "*\.pyc" -o -name "*\.pyo" | xargs rm -f
 endef
 
 $(eval $(call BuildPackage,libsearpc))
