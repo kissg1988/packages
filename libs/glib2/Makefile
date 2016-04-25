@@ -23,6 +23,9 @@ HOST_BUILD_DEPENDS:=libintl/host libiconv/host libffi/host
 PKG_INSTALL:=1
 PKG_USE_MIPS16:=0
 
+# debugging
+TARGET_CFLAGS += -ggdb3
+
 PKG_FIXUP:=autoreconf
 
 HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/glib-$(PKG_VERSION)
