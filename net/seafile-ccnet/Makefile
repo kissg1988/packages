@@ -52,8 +52,6 @@ CONFIGURE_ARGS += --disable-client \
 
 PKG_BUILD_DEPENDS:=vala/host
 
-# debugging
-TARGET_CFLAGS += -ggdb3
 TARGET_LDFLAGS += -Wl,-rpath-link=$(STAGING_DIR)/usr/lib -liconv \
 		    -L$(STAGING_DIR)/usr/lib/mysql -lmysqlclient -lz
 

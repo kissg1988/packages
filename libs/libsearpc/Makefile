@@ -42,8 +42,6 @@ endef
 CONFIGURE_ARGS += --enable-compile-demo=no \
 		    --disable-server-pkg
 
-# debugging
-TARGET_CFLAGS += -ggdb3
 TARGET_LDFLAGS += -Wl,-rpath-link=$(STAGING_DIR)/usr/lib -liconv
 
 define Build/InstallDev

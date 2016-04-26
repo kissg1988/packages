@@ -1,7 +1,7 @@
 #!/bin/sh -eu
 
-BUILDROOT="/home/nb/openwrt-build/openwrt-15.05"
-THREADS=4
+BUILDROOT="/home/nb/openwrt_build/openwrt_15.05.1"
+THREADS=8
 
 OLDPWD=$(pwd)
 cd "${BUILDROOT}"
@@ -21,8 +21,8 @@ CONFIG_TARGET_ar71xx_nand_WNDR4300=y
 CONFIG_PACKAGE_seafile-server=m
 CONFIG_PACKAGE_seafile-seahub=m
 CONFIG_PACKAGE_seafile-ccnet=m
-CONFIG_GDB=y
-CONFIG_PACKAGE_gdbserver=m
+#CONFIG_GDB=y
+#CONFIG_PACKAGE_gdbserver=m
 EOF
 
 make defconfig
