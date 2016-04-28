@@ -7,7 +7,8 @@ EXTRA_COMMANDS="clearsessions"
 
 SEAHUB_FASTCGI=0
 SEAHUB_PORT=8000
-SEAHUB_WORKERS=2
+SEAHUB_METHOD=threaded
+SEAHUB_WORKERS=3
 
 [ -f /etc/config/seafile ] && \
 	. /etc/config/seafile
@@ -142,7 +143,7 @@ function start_seahub_fastcgi() {
 	echo "Starting seahub (fastcgi) at ${address}:${SEAHUB_PORT} ..."
 	check_init_admin
 	$PYTHON "${manage_py}" runfcgi host=${address} port=${SEAHUB_PORT} pidfile=${pidfile} \
-		outlog=${accesslog} errlog=${errorlog} workers=${SEAHUB_WORKERS}
+		outlog=${accesslog} errlog=${errorlog} maxchildren=${SEAHUB_WORKERS} method=${SEAHUB_METHOD}
 
 	# Ensure seahub is started successfully
 	retry=1

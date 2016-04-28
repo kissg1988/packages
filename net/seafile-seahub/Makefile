@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=seafile-seahub
 PKG_VERSION:=5.1.1
-PKG_RELEASE=$(PKG_SOURCE_VERSION)-6
+PKG_RELEASE=$(PKG_SOURCE_VERSION)-7
 PKG_LICENSE:=Apache-2.0
 
 PKG_SOURCE_PROTO:=git
@@ -19,6 +19,7 @@ PKG_SOURCE_VERSION:=95f762f396c81f840fe658ab983df53784083bb1
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 
 include $(INCLUDE_DIR)/package.mk
+$(call include_mk, python-package.mk)
 
 define Package/seafile-seahub
     SECTION:=net
@@ -36,13 +37,14 @@ define Build/Configure
 endef
 
 define Build/Compile
+	$(call Build/Compile/Default,locale)
 endef
 
 define Package/seafile-seahub/description
    The web end of seafile server.
 
-   NOTE: in order to have better performance, language support is turned off by default.
-   Please set 'USE_I18N = True' in seahub_settings.py to support multiple languages.
+   NOTE: in order to have better performance, localization support is turned off by default.
+   Please set 'USE_I18N = True' in seahub_settings.py if you intend to use languages other than English.
 endef
 
 define Package/seafile-seahub/install
