@@ -8,14 +8,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libevhtp
-PKG_VERSION:=1.2.9
+PKG_VERSION:=1.1.6
 PKG_RELEASE:=1
 PKG_LICENSE:=BSD-3-Clause
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/ellzey/libevhtp.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=c95b4da20425cd1bc59e2e108390d7ac03df4b2d
+PKG_SOURCE_VERSION:=91071e2f20749cd469b87ac2ef1c158dc2a6806f
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 
 PKG_INSTALL:=1
@@ -42,12 +42,7 @@ include $(INCLUDE_DIR)/cmake.mk
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/{include,lib}
 	$(CP) $(PKG_INSTALL_DIR)/usr/include/* $(1)/usr/include/
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libevhtp.so* $(1)/usr/lib/
-endef
-
-define Package/libevhtp/install
-	$(INSTALL_DIR) $(1)/usr/lib
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libevhtp.so* $(1)/usr/lib/
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/* $(1)/usr/lib/
 endef
 
 $(eval $(call BuildPackage,libevhtp))
