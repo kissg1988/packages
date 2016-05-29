@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=seafile-server
 PKG_VERSION:=5.1.1
-PKG_RELEASE=$(PKG_SOURCE_VERSION)-15
+PKG_RELEASE=$(PKG_SOURCE_VERSION)-18
 PKG_LICENSE:=GPL-3.0
 
 PKG_SOURCE_PROTO:=git
@@ -32,8 +32,8 @@ define Package/seafile-server
     URL:=http://seafile.com/
     DEPENDS:=+libarchive +libopenssl +glib2 +libsearpc +seafile-ccnet +seafile-seahub +sqlite3-cli +python-mysql \
 		+jansson +libevent2 +libevent2-openssl +zlib +libzdb +libsqlite3 +libmysqlclient +libevhtp \
-		+libpthread +libuuid +bash +procps +procps-pkill $(ICONV_DEPENDS)
-    EXTRA_DEPENDS:=seafile-ccnet (=5.1.1-6d94fdc4296d542a5552039dc13a67c3448e8b13-1), seafile-seahub (=5.1.1-95f762f396c81f840fe658ab983df53784083bb1-7), libevhtp (>=1.2.10)
+		+libpthread +libuuid +bash +procps +procps-pkill +libfuse $(ICONV_DEPENDS)
+    EXTRA_DEPENDS:=seafile-ccnet (=5.1.1-6d94fdc4296d542a5552039dc13a67c3448e8b13-1), seafile-seahub (=5.1.1-95f762f396c81f840fe658ab983df53784083bb1-7)
 endef
 
 define Package/seafile-server/description
@@ -42,17 +42,18 @@ endef
 
 CONFIGURE_ARGS += --disable-riak \
 		    --disable-client \
-		    --disable-fuse \
+		    --enable-fuse \
 		    --enable-server \
 		    --enable-python \
 		    --disable-static-build \
 		    --disable-server-pkg \
 		    --disable-console
 
-PKG_BUILD_DEPENDS:=vala/host
+PKG_BUILD_DEPENDS:=vala/host libevhtp
 
+TARGET_CFLAGS += -minterlink-mips16
 TARGET_LDFLAGS += -Wl,-rpath-link=$(STAGING_DIR)/usr/lib -liconv \
-		    -L$(STAGING_DIR)/usr/lib/mysql -lmysqlclient -lz
+		    -L$(STAGING_DIR)/usr/lib/mysql -lmysqlclient -lz -levent_openssl -levent
 
 define Package/seafile-server/conffiles
 /etc/config/seafile
@@ -70,6 +71,7 @@ define Package/seafile-server/install
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libseafile.so* $(1)/usr/lib/
 	$(CP) $(PKG_BUILD_DIR)/scripts/seaf-gc.sh $(1)/usr/share/seafile/seafile-server/
 	$(CP) $(PKG_BUILD_DIR)/scripts/seaf-fsck.sh $(1)/usr/share/seafile/seafile-server/
+	$(CP) $(PKG_BUILD_DIR)/scripts/seaf-fuse.sh $(1)/usr/share/seafile/seafile-server/
 	$(CP) $(PKG_BUILD_DIR)/scripts/setup-seafile-mysql.py $(1)/usr/share/seafile/seafile-server/
 	$(CP) $(PKG_BUILD_DIR)/scripts/setup-seafile-mysql.sh $(1)/usr/share/seafile/seafile-server/
 	$(CP) $(PKG_BUILD_DIR)/scripts/sqlite2mysql.py $(1)/usr/share/seafile/seafile-server/

@@ -27,5 +27,7 @@ EOF
 
 make defconfig
 echo "Build has started, be patient....."
-nice -n 19 make -j$((THREADS + 1)) V=s > "${BUILDROOT}/build.log" 2>&1
+#nice -n 19 make -j$((THREADS + 1)) V=s > "${BUILDROOT}/build.log" 2>&1
+nice -n 19 make -j$((THREADS + 1)) toolchain/{clean,compile,install} V=s > "${BUILDROOT}/build.log" 2>&1
+nice -n 19 make -j$((THREADS + 1)) package/seafile-server/{clean,compile} V=s > "${BUILDROOT}/build.log" 2>&1
 cd "${OLDPWD}"
